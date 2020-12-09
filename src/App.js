@@ -1,23 +1,39 @@
-import logo from './logo.svg';
+import { useState, Suspense } from 'react';
+import ReactTooltip from 'react-tooltip';
 import './App.css';
+import Title from './components/Title';
+import MapChart from './components/MapChart';
 
 function App() {
+  const [content, setContent] = useState(null);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <Suspense fallback={<div>Fetching results...</div>}>
+        <Suspense fallback={<>Loading...</>}>
+          <Title />
+        </Suspense>
+        <MapChart setTooltipContent={setContent} />
+      </Suspense>
+      <ReactTooltip
+        className="tooltip"
+        textColor="black"
+        backgroundColor="white"
+      >
+        {content && (
+          <>
+            <p className="state">{content.name}</p>
+            <p className="elect-total">{content.electTotal} electoral votes</p>
+            <p className="eevp">
+              {content.eevp}%{' '}
+              {content.winner ? `Expected vote` : `of expected vote in`}
+            </p>
+            {content.winner && (
+              <p className="winner-name">Winner: {content.winner.fullName}</p>
+            )}
+          </>
+        )}
+      </ReactTooltip>
     </div>
   );
 }
